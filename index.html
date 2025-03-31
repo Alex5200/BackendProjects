@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UploadFile</title>
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+
+</head>
+<body>
+    <form id="uploadForm" action="http://localhost:3000/upload" method="POST" enctype="multipart/form-data">
+        <div>
+          <label for="file">Выберите файл для загрузки:</label>
+          <input type="file" id="file" name="file" multiple />
+        </div>
+        <div>
+          <button type="submit">Отправить файл</button>
+        </div>
+      </form>
+      <!-- Элемент для вывода изменённого текста -->
+  <textarea id="modifiedText" rows="20" cols="80" readonly></textarea>
+      <div id="textdiv"></div>
+  <!-- Скрипт для отправки файла через AJAX -->
+  <script>
+    document.getElementById('uploadForm').addEventListener('submit', function(event) {
+      event.preventDefault(); // Предотвращаем стандартное поведение формы (перезагрузку страницы)
+      
+      const formData = new FormData(this); // Собираем данные формы
+
+      fetch('/upload', { // Используем Fetch API для отправки запроса
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.text()) // Получаем ответ в формате текста
+      .then(modifiedText => {
+        if (modifiedText[0] == "#"){
+            let heading = document.createElement('h1');
+            heading.textContent = modifiedText;
+            let divstext = document.getElementById('textdiv');
+            divstext.appendChild(heading);
+        }
+        document.getElementById('modifiedText').value = modifiedText; // Выводим изменённый текст в текстовом поле
+      })
+      .catch(error => {
+        alert('Произошла ошибка при загрузке файла.');
+      });
+    });
+  </script>
+</body>
+</html>
